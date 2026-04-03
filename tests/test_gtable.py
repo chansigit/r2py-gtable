@@ -104,3 +104,16 @@ class TestAsGtable:
     def test_invalid(self):
         with pytest.raises(TypeError):
             as_gtable("not a grob")
+
+
+class TestPublicAPI:
+    def test_all_exports_importable(self):
+        import gtable_r2py
+        for name in gtable_r2py.__all__:
+            assert hasattr(gtable_r2py, name), f"missing export: {name}"
+
+    def test_gtable_function(self):
+        from gtable_r2py import gtable, is_gtable
+        from grid_r2py import Unit
+        gt = gtable(widths=Unit([1], "cm"), heights=Unit([1], "cm"))
+        assert is_gtable(gt)
