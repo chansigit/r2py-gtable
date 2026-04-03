@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gtable-r2py"
+version = "0.1.0"
+description = "Python reimplementation of R's gtable package"
+requires-python = ">=3.10"
+license = "MIT"
+dependencies = [
+    "grid-r2py>=0.1.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
