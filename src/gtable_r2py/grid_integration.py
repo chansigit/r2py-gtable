@@ -83,6 +83,16 @@ def gtable_height_details(gt: GTable) -> Unit:
     return gt.total_height()
 
 
+def gtable_width(gt: GTable) -> Unit:
+    """Return the total width of *gt* (sum of column widths)."""
+    return gt.total_width()
+
+
+def gtable_height(gt: GTable) -> Unit:
+    """Return the total height of *gt* (sum of row heights)."""
+    return gt.total_height()
+
+
 def gtable_show_layout(gt: GTable, **kwargs) -> None:
     """Visualise the layout of a GTable."""
     layout = _gtable_layout(gt)

@@ -41,6 +41,8 @@ from gtable_r2py.grid_integration import (
     gtable_width_details,
     gtable_height_details,
     gtable_show_layout,
+    gtable_width,
+    gtable_height,
 )
 
 
@@ -87,4 +89,6 @@ __all__ = [
     "gtable_width_details",
     "gtable_height_details",
     "gtable_show_layout",
+    "gtable_width",
+    "gtable_height",
 ]

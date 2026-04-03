@@ -93,8 +93,9 @@ class LayoutTable:
                 t=self._t[key], l=self._l[key], b=self._b[key], r=self._r[key],
                 z=self._z[key], clip=self._clip[key], name=self._name[key],
             )
-        if isinstance(key, list) and key and isinstance(key[0], bool):
-            return self.filter(key)
+        if isinstance(key, list):
+            if not key or isinstance(key[0], bool):
+                return self.filter(key)
         raise TypeError(f"invalid index type: {type(key)}")
 
     # -- Mutation -----------------------------------------------------------

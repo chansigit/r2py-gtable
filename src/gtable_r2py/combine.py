@@ -12,6 +12,19 @@ from gtable_r2py.utils import insert_unit, compare_unit
 from gtable_r2py.z import z_arrange_gtables
 
 
+def _copy_gtable(gt: GTable) -> GTable:
+    """Shallow copy of a GTable."""
+    result = GTable(
+        widths=gt.widths, heights=gt.heights,
+        respect=gt.respect, name=gt.name,
+        rownames=list(gt.rownames) if gt.rownames else None,
+        colnames=list(gt.colnames) if gt.colnames else None,
+    )
+    result.layout = gt.layout.copy()
+    result._grobs = list(gt._grobs)
+    return result
+
+
 def gtable_rbind(*gtables: GTable, size: str = "max", z: list | None = None) -> GTable:
     """Combine GTable objects by rows (vertically)."""
     tables = list(gtables)
@@ -29,9 +42,9 @@ def _rbind_two(x: GTable, y: GTable, size: str) -> GTable:
     x_nrow = x.nrow
     y_nrow = y.nrow
     if x_nrow == 0:
-        return y
+        return _copy_gtable(y)
     if y_nrow == 0:
-        return x
+        return _copy_gtable(x)
 
     new_layout = x.layout.copy()
     y_shifted = LayoutTable(
@@ -81,9 +94,9 @@ def _cbind_two(x: GTable, y: GTable, size: str) -> GTable:
     x_ncol = x.ncol
     y_ncol = y.ncol
     if x_ncol == 0:
-        return y
+        return _copy_gtable(y)
     if y_ncol == 0:
-        return x
+        return _copy_gtable(x)
 
     new_layout = x.layout.copy()
     y_shifted = LayoutTable(
