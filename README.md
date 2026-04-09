@@ -26,15 +26,15 @@ This is the Python equivalent of the R example at the bottom of this README —
 building a scatter plot with axes using low-level grid primitives:
 
 ```python
-from grid_r2py import Unit, PointsGrob, XAxisGrob, YAxisGrob, grid_draw
 import random
-
+import grid_r2py as grid
+from grid_r2py import Unit, PointsGrob, XAxisGrob, YAxisGrob
 from gtable_r2py import gtable, gtable_add_grob
 
 # Construct some graphical elements using grid
 points = PointsGrob(
-    x=[random.random() for _ in range(10)],
-    y=[random.random() for _ in range(10)],
+    x=Unit([random.random() for _ in range(10)], "npc"),
+    y=Unit([random.random() for _ in range(10)], "npc"),
     size=Unit([random.random() for _ in range(10)], "cm"),
 )
 xaxis = XAxisGrob(at=[0, 0.25, 0.5, 0.75, 1])
@@ -55,9 +55,13 @@ gtable_add_grob(
     clip="off",
 )
 
-# Draw
-grid_draw(plot)
+# Draw and save
+grid.newpage(backend=MatplotlibBackend(), width=7.0, height=5.0)
+grid.draw(plot)
+grid.save("plot.png")
 ```
+
+<img src="man/figures/README-python-example-1.png" alt="A scatter plot with axes built from scratch using gtable-r2py and grid-r2py" width="100%" />
 
 ### Example: combine multiple tables
 
@@ -78,6 +82,8 @@ combined
 # TableGrob (4 x 4) 'left': 4 grobs
 ```
 
+<img src="man/figures/README-python-example-2.png" alt="Two single-column gtables combined horizontally with padding" width="100%" />
+
 ### Example: filter and inspect
 
 ```python
@@ -90,6 +96,8 @@ panels_only = gtable_filter(combined, r"^a|^c")
 no_rects = gtable_filter(combined, "Rect", invert=True)
 ```
 
+<img src="man/figures/README-python-example-3.png" alt="Filtered gtable showing only grobs matching the name pattern" width="100%" />
+
 ### Full API documentation
 
 See [docs/python/README.md](docs/python/README.md) for the complete API
@@ -99,16 +107,9 @@ reference, all GTable methods, subsetting, and the comparison with R's gtable.
 
 ## R (gtable)
 
-<!-- badges: start -->
-
-[![R-CMD-check](https://github.com/r-lib/gtable/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/r-lib/gtable/actions/workflows/R-CMD-check.yaml)
-[![CRAN
-status](https://www.r-pkg.org/badges/version/gtable)](https://CRAN.R-project.org/package=gtable)
-[![Codecov test
-coverage](https://codecov.io/gh/r-lib/gtable/graph/badge.svg)](https://app.codecov.io/gh/r-lib/gtable)
-[![Lifecycle:
-stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
-<!-- badges: end -->
+The Python package is ported from the original R gtable package (v0.3.6) by
+Hadley Wickham and Thomas Lin Pedersen. See the
+[original repository](https://github.com/r-lib/gtable) for R documentation.
 
 ### Installation
 
