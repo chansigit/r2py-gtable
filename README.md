@@ -20,15 +20,17 @@ pip install gtable-r2py
 
 **Requires:** Python >= 3.10, [grid-r2py](https://github.com/chansigit/grid-r2py) >= 0.1.0
 
-### Example: build a plot layout from scratch
+### Example
 
-This is the Python equivalent of the R example at the bottom of this README —
-building a scatter plot with axes using low-level grid primitives:
+While most people will interact with gtable through higher-level plotting
+libraries, it is possible to build a plot from the ground up. This is the
+Python equivalent of the R example below:
 
 ```python
 import random
 import grid_r2py as grid
 from grid_r2py import Unit, PointsGrob, XAxisGrob, YAxisGrob
+from grid_r2py.backend.matplotlib import MatplotlibBackend
 from gtable_r2py import gtable, gtable_add_grob
 
 # Construct some graphical elements using grid
@@ -62,41 +64,6 @@ grid.save("plot.png")
 ```
 
 <img src="man/figures/README-python-example-1.png" alt="A scatter plot with axes built from scratch using gtable-r2py and grid-r2py" width="100%" />
-
-### Example: combine multiple tables
-
-```python
-from grid_r2py import Unit, RectGrob, CircleGrob
-
-from gtable_r2py import gtable_col, gtable_cbind, gtable_add_padding
-
-# Create two single-column tables
-left = gtable_col("left", [RectGrob(name="a"), RectGrob(name="b")])
-right = gtable_col("right", [CircleGrob(name="c"), CircleGrob(name="d")])
-
-# Join horizontally and add padding
-combined = gtable_cbind(left, right)
-gtable_add_padding(combined, Unit(0.5, "cm"))
-
-combined
-# TableGrob (4 x 4) 'left': 4 grobs
-```
-
-<img src="man/figures/README-python-example-2.png" alt="Two single-column gtables combined horizontally with padding" width="100%" />
-
-### Example: filter and inspect
-
-```python
-from gtable_r2py import gtable_filter, gtable_trim
-
-# Keep only grobs whose names match a regex
-panels_only = gtable_filter(combined, r"^a|^c")
-
-# Remove matching grobs
-no_rects = gtable_filter(combined, "Rect", invert=True)
-```
-
-<img src="man/figures/README-python-example-3.png" alt="Filtered gtable showing only grobs matching the name pattern" width="100%" />
 
 ### Full API documentation
 
