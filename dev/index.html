@@ -64,29 +64,114 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header">
-<img src="logo.png" class="logo" alt=""><h1 id="gtable-">gtable 
-<a class="anchor" aria-label="anchor" href="#gtable-"></a>
+<img src="logo.png" class="logo" alt=""><h1 id="gtable--gtable-r2py">gtable / gtable-r2py<a class="anchor" aria-label="anchor" href="#gtable--gtable-r2py"></a>
 </h1>
 </div>
+<p>A layout engine built on top of <code>grid</code> for arranging graphical objects (grobs) in a table-based grid. Grobs can span multiple rows and columns, and gtable objects can be nested, enabling complex automatically-arranging layouts.</p>
+<p>This repository contains both the <strong>original R package</strong> (<a href="https://github.com/r-lib/gtable" class="external-link">r-lib/gtable</a>) and a <strong>faithful Python reimplementation</strong> (<code>gtable-r2py</code>).</p>
+<hr>
+<div class="section level2">
+<h2 id="python-gtable-r2py">Python (gtable-r2py)<a class="anchor" aria-label="anchor" href="#python-gtable-r2py"></a>
+</h2>
+<div class="section level3">
+<h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="ex">pip</span> install gtable-r2py</span></code></pre></div>
+<p><strong>Requires:</strong> Python &gt;= 3.10, <a href="https://github.com/chansigit/grid-r2py" class="external-link">grid-r2py</a> &gt;= 0.1.0</p>
+</div>
+<div class="section level3">
+<h3 id="example-build-a-plot-layout-from-scratch">Example: build a plot layout from scratch<a class="anchor" aria-label="anchor" href="#example-build-a-plot-layout-from-scratch"></a>
+</h3>
+<p>This is the Python equivalent of the R example at the bottom of this README — building a scatter plot with axes using low-level grid primitives:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="im">from</span> grid_r2py <span class="im">import</span> Unit, PointsGrob, XAxisGrob, YAxisGrob, grid_draw</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="im">import</span> random</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="im">from</span> gtable_r2py <span class="im">import</span> gtable, gtable_add_grob</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co"># Construct some graphical elements using grid</span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>points <span class="op">=</span> PointsGrob(</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>    x<span class="op">=</span>[random.random() <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>)],</span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>    y<span class="op">=</span>[random.random() <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>)],</span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>    size<span class="op">=</span>Unit([random.random() <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>)], <span class="st">"cm"</span>),</span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a>)</span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a>xaxis <span class="op">=</span> XAxisGrob(at<span class="op">=</span>[<span class="dv">0</span>, <span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="dv">1</span>])</span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a>yaxis <span class="op">=</span> YAxisGrob(at<span class="op">=</span>[<span class="dv">0</span>, <span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="dv">1</span>])</span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="co"># Setup the gtable layout</span></span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a>plot <span class="op">=</span> gtable(</span>
+<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a>    widths<span class="op">=</span>Unit([<span class="fl">1.5</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="fl">0.5</span>], [<span class="st">"cm"</span>, <span class="st">"cm"</span>, <span class="st">"null"</span>, <span class="st">"cm"</span>]),</span>
+<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a>    heights<span class="op">=</span>Unit([<span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>], [<span class="st">"cm"</span>, <span class="st">"null"</span>, <span class="st">"cm"</span>, <span class="st">"cm"</span>]),</span>
+<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a>)</span>
+<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" tabindex="-1"></a><span class="co"># Add the grobs</span></span>
+<span id="cb2-22"><a href="#cb2-22" tabindex="-1"></a>gtable_add_grob(</span>
+<span id="cb2-23"><a href="#cb2-23" tabindex="-1"></a>    plot,</span>
+<span id="cb2-24"><a href="#cb2-24" tabindex="-1"></a>    grobs<span class="op">=</span>[points, xaxis, yaxis],</span>
+<span id="cb2-25"><a href="#cb2-25" tabindex="-1"></a>    t<span class="op">=</span>[<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">2</span>],</span>
+<span id="cb2-26"><a href="#cb2-26" tabindex="-1"></a>    l<span class="op">=</span>[<span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">2</span>],</span>
+<span id="cb2-27"><a href="#cb2-27" tabindex="-1"></a>    clip<span class="op">=</span><span class="st">"off"</span>,</span>
+<span id="cb2-28"><a href="#cb2-28" tabindex="-1"></a>)</span>
+<span id="cb2-29"><a href="#cb2-29" tabindex="-1"></a></span>
+<span id="cb2-30"><a href="#cb2-30" tabindex="-1"></a><span class="co"># Draw</span></span>
+<span id="cb2-31"><a href="#cb2-31" tabindex="-1"></a>grid_draw(plot)</span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="example-combine-multiple-tables">Example: combine multiple tables<a class="anchor" aria-label="anchor" href="#example-combine-multiple-tables"></a>
+</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="im">from</span> grid_r2py <span class="im">import</span> Unit, RectGrob, CircleGrob</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="im">from</span> gtable_r2py <span class="im">import</span> gtable_col, gtable_cbind, gtable_add_padding</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co"># Create two single-column tables</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>left <span class="op">=</span> gtable_col(<span class="st">"left"</span>, [RectGrob(name<span class="op">=</span><span class="st">"a"</span>), RectGrob(name<span class="op">=</span><span class="st">"b"</span>)])</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>right <span class="op">=</span> gtable_col(<span class="st">"right"</span>, [CircleGrob(name<span class="op">=</span><span class="st">"c"</span>), CircleGrob(name<span class="op">=</span><span class="st">"d"</span>)])</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co"># Join horizontally and add padding</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>combined <span class="op">=</span> gtable_cbind(left, right)</span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>gtable_add_padding(combined, Unit(<span class="fl">0.5</span>, <span class="st">"cm"</span>))</span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>combined</span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co"># TableGrob (4 x 4) 'left': 4 grobs</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="example-filter-and-inspect">Example: filter and inspect<a class="anchor" aria-label="anchor" href="#example-filter-and-inspect"></a>
+</h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="im">from</span> gtable_r2py <span class="im">import</span> gtable_filter, gtable_trim</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co"># Keep only grobs whose names match a regex</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>panels_only <span class="op">=</span> gtable_filter(combined, <span class="vs">r"^a|^c"</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co"># Remove matching grobs</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>no_rects <span class="op">=</span> gtable_filter(combined, <span class="st">"Rect"</span>, invert<span class="op">=</span><span class="va">True</span>)</span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="full-api-documentation">Full API documentation<a class="anchor" aria-label="anchor" href="#full-api-documentation"></a>
+</h3>
+<p>See <a href="docs/python/README.html">docs/python/README.md</a> for the complete API reference, all GTable methods, subsetting, and the comparison with R’s gtable.</p>
+<hr>
+</div>
+</div>
+<div class="section level2">
+<h2 id="r-gtable">R (gtable)<a class="anchor" aria-label="anchor" href="#r-gtable"></a>
+</h2>
 <!-- badges: start -->
 
-<p>gtable is a layout engine built on top of the grid package. It is used to abstract away the creation of (potentially nested) grids of viewports into which graphic objects can be placed. gtable makes it easy to ensure alignment of graphic elements and piecemeal compositions of complex graphics. gtable is the layout engine powering <a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a> and is thus used extensively by many plotting functions in R without being called directly.</p>
-<div class="section level2">
-<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
-</h2>
-<p>You can install the released version of gtable from <a href="https://CRAN.R-project.org" class="external-link">CRAN</a> with:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="section level3">
+<h3 id="installation-1">Installation<a class="anchor" aria-label="anchor" href="#installation-1"></a>
+</h3>
+<p>Install from <a href="https://CRAN.R-project.org" class="external-link">CRAN</a>:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"gtable"</span><span class="op">)</span></span></code></pre></div>
-<p>or use the remotes package to install the development version from <a href="https://github.com/r-lib/gtable" class="external-link">GitHub</a></p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<p>Or the development version from <a href="https://github.com/r-lib/gtable" class="external-link">GitHub</a>:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("pak")</span></span>
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"r-lib/gtable"</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
-</h2>
+<div class="section level3">
+<h3 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
+</h3>
 <p>ggplot2 uses gtable for laying out plots, and it is possible to access the gtable representation of a plot for inspection and modification:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://gtable.r-lib.org">gtable</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span></span>
@@ -121,12 +206,12 @@
 <span><span class="co">#&gt; 22 21 (14-14, 7- 7)          caption          zeroGrob[plot.caption..zeroGrob.36]</span></span></code></pre></div>
 <p>A gtable object is a collection of graphic elements along with their placement in the grid and the dimensions of the grid itself. Graphic elements can span multiple rows and columns in the grid and be gtables themselves allowing for very complex automatically arranging layouts.</p>
 <p>A gtable object is itself a grob, and can thus be drawn using standard functions from the grid package:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">grid</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/grid/grid.draw.html" class="external-link">grid.draw</a></span><span class="op">(</span><span class="va">p_table</span><span class="op">)</span> <span class="co"># alternative use plot(p_table)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-2-1.png" alt="A scatterplot of miles per gallon against displacement based on the mtcars dataset. The plot is rendered by first converting the ggplot object to a gtable and then plotting the gtable" width="100%"></p>
 <p>While most people will interact with gtable through ggplot2, it is possible to build a plot from the ground up.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Construct some graphical elements using grid</span></span>
 <span><span class="va">points</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/grid/grid.points.html" class="external-link">pointsGrob</a></span><span class="op">(</span></span>
 <span>  x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>,</span>
@@ -154,6 +239,7 @@
 <span><span class="co"># Plot</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/grid/grid.draw.html" class="external-link">grid.draw</a></span><span class="op">(</span><span class="va">plot</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-3-1.png" alt="A scatterplot of random numbers. The scatterplot is created by combining separate grobs created with grid using gtable." width="100%"></p>
+</div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">

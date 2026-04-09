@@ -1,31 +1,126 @@
-# gtable
+# gtable / gtable-r2py
 
-gtable is a layout engine built on top of the grid package. It is used
-to abstract away the creation of (potentially nested) grids of viewports
-into which graphic objects can be placed. gtable makes it easy to ensure
-alignment of graphic elements and piecemeal compositions of complex
-graphics. gtable is the layout engine powering
-[ggplot2](https://ggplot2.tidyverse.org) and is thus used extensively by
-many plotting functions in R without being called directly.
+A layout engine built on top of `grid` for arranging graphical objects
+(grobs) in a table-based grid. Grobs can span multiple rows and columns,
+and gtable objects can be nested, enabling complex
+automatically-arranging layouts.
 
-## Installation
+This repository contains both the **original R package**
+([r-lib/gtable](https://github.com/r-lib/gtable)) and a **faithful
+Python reimplementation** (`gtable-r2py`).
 
-You can install the released version of gtable from
-[CRAN](https://CRAN.R-project.org) with:
+------------------------------------------------------------------------
+
+## Python (gtable-r2py)
+
+### Installation
+
+``` bash
+pip install gtable-r2py
+```
+
+**Requires:** Python \>= 3.10,
+[grid-r2py](https://github.com/chansigit/grid-r2py) \>= 0.1.0
+
+### Example: build a plot layout from scratch
+
+This is the Python equivalent of the R example at the bottom of this
+README — building a scatter plot with axes using low-level grid
+primitives:
+
+``` python
+from grid_r2py import Unit, PointsGrob, XAxisGrob, YAxisGrob, grid_draw
+import random
+
+from gtable_r2py import gtable, gtable_add_grob
+
+# Construct some graphical elements using grid
+points = PointsGrob(
+    x=[random.random() for _ in range(10)],
+    y=[random.random() for _ in range(10)],
+    size=Unit([random.random() for _ in range(10)], "cm"),
+)
+xaxis = XAxisGrob(at=[0, 0.25, 0.5, 0.75, 1])
+yaxis = YAxisGrob(at=[0, 0.25, 0.5, 0.75, 1])
+
+# Setup the gtable layout
+plot = gtable(
+    widths=Unit([1.5, 0, 1, 0.5], ["cm", "cm", "null", "cm"]),
+    heights=Unit([0.5, 1, 0, 1], ["cm", "null", "cm", "cm"]),
+)
+
+# Add the grobs
+gtable_add_grob(
+    plot,
+    grobs=[points, xaxis, yaxis],
+    t=[2, 3, 2],
+    l=[3, 3, 2],
+    clip="off",
+)
+
+# Draw
+grid_draw(plot)
+```
+
+### Example: combine multiple tables
+
+``` python
+from grid_r2py import Unit, RectGrob, CircleGrob
+
+from gtable_r2py import gtable_col, gtable_cbind, gtable_add_padding
+
+# Create two single-column tables
+left = gtable_col("left", [RectGrob(name="a"), RectGrob(name="b")])
+right = gtable_col("right", [CircleGrob(name="c"), CircleGrob(name="d")])
+
+# Join horizontally and add padding
+combined = gtable_cbind(left, right)
+gtable_add_padding(combined, Unit(0.5, "cm"))
+
+combined
+# TableGrob (4 x 4) 'left': 4 grobs
+```
+
+### Example: filter and inspect
+
+``` python
+from gtable_r2py import gtable_filter, gtable_trim
+
+# Keep only grobs whose names match a regex
+panels_only = gtable_filter(combined, r"^a|^c")
+
+# Remove matching grobs
+no_rects = gtable_filter(combined, "Rect", invert=True)
+```
+
+### Full API documentation
+
+See
+[docs/python/README.md](https://gtable.r-lib.org/dev/docs/python/README.md)
+for the complete API reference, all GTable methods, subsetting, and the
+comparison with R’s gtable.
+
+------------------------------------------------------------------------
+
+## R (gtable)
+
+### Installation
+
+Install from [CRAN](https://CRAN.R-project.org):
 
 ``` r
 install.packages("gtable")
 ```
 
-or use the remotes package to install the development version from
-[GitHub](https://github.com/r-lib/gtable)
+Or the development version from
+[GitHub](https://github.com/r-lib/gtable):
 
 ``` r
 # install.packages("pak")
 pak::pak("r-lib/gtable")
 ```
 
-## Example
+### Example
 
 ggplot2 uses gtable for laying out plots, and it is possible to access
 the gtable representation of a plot for inspection and modification:
