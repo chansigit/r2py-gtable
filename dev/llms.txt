@@ -1,0 +1,182 @@
+# gtable
+
+gtable is a layout engine built on top of the grid package. It is used
+to abstract away the creation of (potentially nested) grids of viewports
+into which graphic objects can be placed. gtable makes it easy to ensure
+alignment of graphic elements and piecemeal compositions of complex
+graphics. gtable is the layout engine powering
+[ggplot2](https://ggplot2.tidyverse.org) and is thus used extensively by
+many plotting functions in R without being called directly.
+
+## Installation
+
+You can install the released version of gtable from
+[CRAN](https://CRAN.R-project.org) with:
+
+``` r
+install.packages("gtable")
+```
+
+or use the remotes package to install the development version from
+[GitHub](https://github.com/r-lib/gtable)
+
+``` r
+# install.packages("pak")
+pak::pak("r-lib/gtable")
+```
+
+## Example
+
+ggplot2 uses gtable for laying out plots, and it is possible to access
+the gtable representation of a plot for inspection and modification:
+
+``` r
+library(gtable)
+library(ggplot2)
+
+p <- ggplot(mtcars, aes(mpg, disp)) + geom_point()
+
+p_table <- ggplotGrob(p)
+
+p_table
+#> TableGrob (16 x 13) "layout": 22 grobs
+#>     z         cells             name                                         grob
+#> 1   0 ( 1-16, 1-13)       background               rect[plot.background..rect.38]
+#> 2   5 ( 8- 8, 6- 6)           spacer                               zeroGrob[NULL]
+#> 3   7 ( 9- 9, 6- 6)           axis-l           absoluteGrob[GRID.absoluteGrob.26]
+#> 4   3 (10-10, 6- 6)           spacer                               zeroGrob[NULL]
+#> 5   6 ( 8- 8, 7- 7)           axis-t                               zeroGrob[NULL]
+#> 6   1 ( 9- 9, 7- 7)            panel                      gTree[panel-1.gTree.17]
+#> 7   9 (10-10, 7- 7)           axis-b           absoluteGrob[GRID.absoluteGrob.22]
+#> 8   4 ( 8- 8, 8- 8)           spacer                               zeroGrob[NULL]
+#> 9   8 ( 9- 9, 8- 8)           axis-r                               zeroGrob[NULL]
+#> 10  2 (10-10, 8- 8)           spacer                               zeroGrob[NULL]
+#> 11 10 ( 7- 7, 7- 7)           xlab-t                               zeroGrob[NULL]
+#> 12 11 (11-11, 7- 7)           xlab-b titleGrob[axis.title.x.bottom..titleGrob.30]
+#> 13 12 ( 9- 9, 5- 5)           ylab-l   titleGrob[axis.title.y.left..titleGrob.33]
+#> 14 13 ( 9- 9, 9- 9)           ylab-r                               zeroGrob[NULL]
+#> 15 14 ( 9- 9,11-11)  guide-box-right                               zeroGrob[NULL]
+#> 16 15 ( 9- 9, 3- 3)   guide-box-left                               zeroGrob[NULL]
+#> 17 16 (13-13, 7- 7) guide-box-bottom                               zeroGrob[NULL]
+#> 18 17 ( 5- 5, 7- 7)    guide-box-top                               zeroGrob[NULL]
+#> 19 18 ( 9- 9, 7- 7) guide-box-inside                               zeroGrob[NULL]
+#> 20 19 ( 4- 4, 7- 7)         subtitle         zeroGrob[plot.subtitle..zeroGrob.35]
+#> 21 20 ( 3- 3, 7- 7)            title            zeroGrob[plot.title..zeroGrob.34]
+#> 22 21 (14-14, 7- 7)          caption          zeroGrob[plot.caption..zeroGrob.36]
+```
+
+A gtable object is a collection of graphic elements along with their
+placement in the grid and the dimensions of the grid itself. Graphic
+elements can span multiple rows and columns in the grid and be gtables
+themselves allowing for very complex automatically arranging layouts.
+
+A gtable object is itself a grob, and can thus be drawn using standard
+functions from the grid package:
+
+``` r
+library(grid)
+grid.draw(p_table) # alternative use plot(p_table)
+```
+
+![A scatterplot of miles per gallon against displacement based on the
+mtcars dataset. The plot is rendered by first converting the ggplot
+object to a gtable and then plotting the
+gtable](reference/figures/README-unnamed-chunk-2-1.png)
+
+While most people will interact with gtable through ggplot2, it is
+possible to build a plot from the ground up.
+
+``` r
+# Construct some graphical elements using grid
+points <- pointsGrob(
+  x = runif(10),
+  y = runif(10),
+  size = unit(runif(10), 'cm')
+)
+xaxis <- xaxisGrob(at = c(0, 0.25, 0.5, 0.75, 1))
+yaxis <- yaxisGrob(at = c(0, 0.25, 0.5, 0.75, 1))
+
+# Setup the gtable layout
+plot <- gtable(
+  widths = unit(c(1.5, 0, 1, 0.5), c('cm', 'cm', 'null', 'cm')),
+  heights = unit(c(0.5, 1, 0, 1), c('cm', 'null', 'cm', 'cm'))
+)
+
+# Add the grobs
+plot <- gtable_add_grob(
+  plot,
+  grobs = list(points, xaxis, yaxis),
+  t = c(2, 3, 2),
+  l = c(3, 3, 2),
+  clip = 'off'
+)
+
+# Plot
+grid.draw(plot)
+```
+
+![A scatterplot of random numbers. The scatterplot is created by
+combining separate grobs created with grid using
+gtable.](reference/figures/README-unnamed-chunk-3-1.png)
+
+# Package index
+
+## Construction
+
+- [`gtable()`](https://gtable.r-lib.org/dev/reference/gtable.md) :
+  Create a new grob table.
+- [`gtable_matrix()`](https://gtable.r-lib.org/dev/reference/gtable_matrix.md)
+  : Create a gtable from a matrix of grobs.
+- [`gtable_col()`](https://gtable.r-lib.org/dev/reference/gtable_col.md)
+  : Create a single column gtable
+- [`gtable_row()`](https://gtable.r-lib.org/dev/reference/gtable_row.md)
+  : Create a single row gtable.
+- [`gtable_row_spacer()`](https://gtable.r-lib.org/dev/reference/gtable_spacer.md)
+  [`gtable_col_spacer()`](https://gtable.r-lib.org/dev/reference/gtable_spacer.md)
+  : Create a row/col spacer gtable.
+- [`as.gtable()`](https://gtable.r-lib.org/dev/reference/as.gtable.md) :
+  Convert to a gtable
+
+## Modification
+
+- [`gtable_add_grob()`](https://gtable.r-lib.org/dev/reference/gtable_add_grob.md)
+  : Add a single grob, possibly spanning multiple rows or columns.
+- [`gtable_add_cols()`](https://gtable.r-lib.org/dev/reference/gtable_add_cols.md)
+  : Add new columns in specified position.
+- [`gtable_add_rows()`](https://gtable.r-lib.org/dev/reference/gtable_add_rows.md)
+  : Add new rows in specified position.
+- [`gtable_add_padding()`](https://gtable.r-lib.org/dev/reference/gtable_add_padding.md)
+  : Add padding around edges of table.
+- [`gtable_add_col_space()`](https://gtable.r-lib.org/dev/reference/gtable_add_space.md)
+  [`gtable_add_row_space()`](https://gtable.r-lib.org/dev/reference/gtable_add_space.md)
+  : Add row/column spacing.
+- [`gtable_trim()`](https://gtable.r-lib.org/dev/reference/gtable_trim.md)
+  : Trim off empty cells.
+- [`gtable_filter()`](https://gtable.r-lib.org/dev/reference/gtable_filter.md)
+  : Filter cells by name
+
+## Combining
+
+- [`rbind(`*`<gtable>`*`)`](https://gtable.r-lib.org/dev/reference/bind.md)
+  [`cbind(`*`<gtable>`*`)`](https://gtable.r-lib.org/dev/reference/bind.md)
+  : Row and column binding for gtables.
+
+## Inspection
+
+- [`is.gtable()`](https://gtable.r-lib.org/dev/reference/is.gtable.md) :
+  Is this a gtable?
+- [`print(`*`<gtable>`*`)`](https://gtable.r-lib.org/dev/reference/print.gtable.md)
+  : Print a gtable object
+- [`gtable_show_layout()`](https://gtable.r-lib.org/dev/reference/gtable_show_layout.md)
+  : Visualise the layout of a gtable.
+- [`gtable_height()`](https://gtable.r-lib.org/dev/reference/gtable_height.md)
+  : Returns the height of a gtable, in the gtable's units
+- [`gtable_width()`](https://gtable.r-lib.org/dev/reference/gtable_width.md)
+  : Returns the width of a gtable, in the gtable's units
+
+# Articles
+
+### All vignettes
+
+- [Profiling
+  Performance](https://gtable.r-lib.org/dev/articles/profiling.md):
