@@ -117,3 +117,12 @@ class TestAddCols:
         gt = GTable(widths=Unit([1], "cm"), heights=Unit([1], "cm"))
         result = gt.add_cols(Unit([1], "cm"))
         assert result is gt
+
+
+class TestAddGrobErrors:
+    def test_mismatched_arg_lengths(self):
+        gt = GTable(widths=Unit([1, 1], "cm"), heights=Unit([1, 1], "cm"))
+        r1 = RectGrob(name="r1")
+        r2 = RectGrob(name="r2")
+        with pytest.raises(ValueError, match="length 1 or 2"):
+            gtable_add_grob(gt, [r1, r2], t=[1, 2], l=[1, 2, 3])

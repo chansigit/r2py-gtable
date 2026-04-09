@@ -1,5 +1,6 @@
 import pytest
 from grid_r2py import Unit, RectGrob, Viewport, Layout, GTree
+from grid_r2py.vp_collections import VpStack
 from gtable_r2py.gtable import GTable
 from gtable_r2py.add import gtable_add_grob
 from gtable_r2py.grid_integration import (
@@ -31,7 +32,33 @@ class TestMakeContext:
             vp=outer_vp,
         )
         gtable_make_context(gt)
-        assert gt.vp is not None
+        # Should produce a VpStack with [outer_vp, layout_vp]
+        assert isinstance(gt.vp, VpStack)
+        assert len(gt.vp) == 2
+        assert gt.vp[0] is outer_vp
+        assert gt.vp[1].layout is not None
+        assert gt.vp[1].layout.nrow == 1
+        assert gt.vp[1].layout.ncol == 1
+
+    def test_idempotent_no_vp(self):
+        """Calling make_context twice without user vp should not nest."""
+        gt = GTable(widths=Unit([1], "cm"), heights=Unit([1], "cm"), name="test")
+        gtable_make_context(gt)
+        gtable_make_context(gt)
+        # Should still be a plain Viewport, not nested
+        assert not isinstance(gt.vp, VpStack)
+        assert gt.vp.layout is not None
+
+    def test_idempotent_with_vp(self):
+        """Calling make_context twice with user vp should not double-nest."""
+        outer_vp = Viewport(name="outer")
+        gt = GTable(widths=Unit([1], "cm"), heights=Unit([1], "cm"), name="test", vp=outer_vp)
+        gtable_make_context(gt)
+        gtable_make_context(gt)
+        # Should still be a VpStack of exactly 2, not 3+
+        assert isinstance(gt.vp, VpStack)
+        assert len(gt.vp) == 2
+        assert gt.vp[0] is outer_vp
 
 
 class TestMakeContent:

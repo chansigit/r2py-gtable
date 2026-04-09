@@ -84,3 +84,25 @@ class TestSpacers:
         assert gt.nrow == 2
         assert gt.ncol == 0
         assert len(gt) == 0
+
+
+class TestLayoutErrors:
+    def test_gtable_col_z_length_mismatch(self):
+        grobs = [RectGrob(name="a"), RectGrob(name="b")]
+        with pytest.raises(ValueError, match="same length"):
+            gtable_col("test", grobs, z=[1.0])
+
+    def test_gtable_row_z_length_mismatch(self):
+        grobs = [RectGrob(name="a"), RectGrob(name="b")]
+        with pytest.raises(ValueError, match="same length"):
+            gtable_row("test", grobs, z=[1.0, 2.0, 3.0])
+
+    def test_gtable_matrix_width_mismatch(self):
+        grobs = [[RectGrob(name="a"), RectGrob(name="b")]]
+        with pytest.raises(ValueError, match="widths"):
+            gtable_matrix("test", grobs, widths=Unit([1], "cm"), heights=Unit([1], "cm"))
+
+    def test_gtable_matrix_height_mismatch(self):
+        grobs = [[RectGrob(name="a")]]
+        with pytest.raises(ValueError, match="heights"):
+            gtable_matrix("test", grobs, widths=Unit([1], "cm"), heights=Unit([1, 2], "cm"))

@@ -1,2 +1,1 @@
-import pytest
-from grid_r2py import Unit, Gpar, NullGrob, RectGrob
+"""Shared test fixtures for gtable_r2py."""

@@ -6,6 +6,7 @@ from grid_r2py import (
     GTree, GList, Viewport, Layout, Unit,
     set_children,
 )
+from grid_r2py.vp_collections import VpStack
 from grid_r2py import show_layout as grid_show_layout
 
 from gtable_r2py.gtable import GTable
@@ -28,16 +29,21 @@ def _vpname(layout_row) -> str:
 
 
 def gtable_make_context(gt: GTable) -> GTable:
-    """Set up the layout viewport for rendering. Modifies *gt* in place."""
+    """Set up the layout viewport for rendering. Modifies *gt* in place.
+
+    Idempotent: always rebuilds from the original user-supplied vp stored in
+    ``gt._user_vp``, so repeated calls (e.g. during redraws) do not nest
+    viewports deeper each time.
+    """
     layout_vp = Viewport(
         layout=_gtable_layout(gt),
         name=gt.name,
     )
-    if gt.vp is None:
+    user_vp = gt._user_vp
+    if user_vp is None:
         gt.vp = layout_vp
     else:
-        gt._outer_vp = gt.vp
-        gt.vp = layout_vp
+        gt.vp = VpStack([user_vp, layout_vp])
     return gt
 
 

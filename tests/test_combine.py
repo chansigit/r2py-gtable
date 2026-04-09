@@ -108,3 +108,11 @@ class TestEmptyBinds:
         b = _make_gt(1, 2)
         result = gtable_cbind(a, b)
         assert result.ncol == 2
+
+
+class TestCombineErrors:
+    def test_invalid_size_param(self):
+        a = _make_gt(1, 2)
+        b = _make_gt(1, 2)
+        with pytest.raises(ValueError, match="size must be"):
+            gtable_rbind(a, b, size="invalid")

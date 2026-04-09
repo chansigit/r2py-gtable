@@ -9,7 +9,7 @@ from grid_r2py import Unit
 from gtable_r2py.gtable import GTable
 from gtable_r2py.layout_table import LayoutTable
 from gtable_r2py.add import gtable_add_rows, gtable_add_cols
-from gtable_r2py.utils import _unit_slice
+from gtable_r2py.utils import unit_slice
 
 
 def gtable_trim(gt: GTable) -> GTable:
@@ -23,8 +23,8 @@ def gtable_trim(gt: GTable) -> GTable:
     row_min = min(min(layout.t), min(layout.b))
     row_max = max(max(layout.t), max(layout.b))
 
-    new_widths = _unit_slice(gt.widths, col_min - 1, col_max)
-    new_heights = _unit_slice(gt.heights, row_min - 1, row_max)
+    new_widths = unit_slice(gt.widths, col_min - 1, col_max)
+    new_heights = unit_slice(gt.heights, row_min - 1, row_max)
 
     new_layout = LayoutTable(
         t=[v - row_min + 1 for v in layout.t],
@@ -79,7 +79,11 @@ def gtable_filter(
 
 
 def gtable_add_padding(gt: GTable, padding) -> GTable:
-    """Add padding around table edges (top, right, bottom, left). Returns *gt*."""
+    """Add padding around table edges. Returns *gt*.
+
+    *padding* is a Unit of length 1 (uniform) or 4 (CSS order: top, right,
+    bottom, left).
+    """
     # padding can be a Unit of length 1 or 4; replicate to length 4
     if len(padding) == 1:
         p = [padding] * 4

@@ -40,6 +40,8 @@ class GTable(GTree):
         self.colnames: list[str] | None = list(colnames) if colnames is not None else None
         self.layout: LayoutTable = LayoutTable()
         self._grobs: list[Grob] = []
+        # Stash the user-supplied vp so make_context can rebuild idempotently.
+        self._user_vp = vp
 
     # -- Dimensions ---------------------------------------------------------
 

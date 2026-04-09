@@ -10,7 +10,7 @@ def neg_to_pos(x: int, max_val: int) -> int:
     return x if x >= 0 else max_val + 1 + x
 
 
-def _unit_slice(u: Unit, start: int, stop: int) -> Unit:
+def unit_slice(u: Unit, start: int, stop: int) -> Unit:
     """Extract a sub-range from a Unit (workaround: Unit only supports int indexing)."""
     if start >= stop:
         return Unit([], "cm")
@@ -28,8 +28,8 @@ def insert_unit(x: Unit, values: Unit, after: int) -> Unit:
         return unit_c(values, x)
     if after >= len_x:
         return unit_c(x, values)
-    head = _unit_slice(x, 0, after)
-    tail = _unit_slice(x, after, len_x)
+    head = unit_slice(x, 0, after)
+    tail = unit_slice(x, after, len_x)
     return unit_c(head, values, tail)
 
 

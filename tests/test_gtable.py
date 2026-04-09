@@ -117,3 +117,25 @@ class TestPublicAPI:
         from grid_r2py import Unit
         gt = gtable(widths=Unit([1], "cm"), heights=Unit([1], "cm"))
         assert is_gtable(gt)
+
+
+class TestGTableErrors:
+    def test_getitem_requires_tuple(self):
+        gt = GTable(widths=Unit([1], "cm"), heights=Unit([1], "cm"))
+        with pytest.raises(TypeError, match="requires \\[rows, cols\\]"):
+            gt[0]
+
+    def test_getitem_requires_two_elements(self):
+        gt = GTable(widths=Unit([1], "cm"), heights=Unit([1], "cm"))
+        with pytest.raises(TypeError, match="requires \\[rows, cols\\]"):
+            gt[0, 0, 0]
+
+    def test_resolve_index_invalid_type(self):
+        gt = GTable(widths=Unit([1], "cm"), heights=Unit([1], "cm"))
+        with pytest.raises(TypeError, match="invalid index type"):
+            gt[{1}, 0]
+
+    def test_resolve_index_name_without_names(self):
+        gt = GTable(widths=Unit([1], "cm"), heights=Unit([1], "cm"))
+        with pytest.raises(KeyError, match="no names"):
+            gt["missing", 0]
